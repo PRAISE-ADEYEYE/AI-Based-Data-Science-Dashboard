@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Based Data Science Dashboard</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f4f6;
+    }
+    header {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 0;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    .upload-container {
+      margin: 20px 0;
+      border: 2px solid #ddd;
+      padding: 15px;
+      border-radius: 8px;
+      width: 50%;
+      text-align: center;
+    }
+    .upload-button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      border: none;
+      font-size: 16px;
+    }
+    .upload-button:hover {
+      background-color: #45a049;
+    }
+    .chart-container {
+      width: 90%;
+      margin-top: 20px;
+    }
+    .results-container {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      border: none;
+    }
+    .button:hover {
+      background-color: #45a049;
+    }
+    .toggle-theme {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px;
+      background-color: #444;
+      color: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    .dark-mode {
+      background-color: #121212;
+      color: white;
+    }
+    .light-mode {
+      background-color: #f3f4f6;
+      color: black;
+    }
+    .graph {
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI-Based Data Science Dashboard</h1>
+  </header>
+  
+  <div class="container">
+    <!-- Upload Section -->
+    <div class="upload-container">
+      <input type="file" id="fileInput" class="upload-button" />
+      <button class="upload-button" onclick="loadFile()">Upload Data</button>
+    </div>
+
+    <!-- Data Preview Section -->
+    <div id="dataPreview" class="chart-container"></div>
+
+    <!-- Data Processing Options -->
+    <div class="results-container">
+      <button class="button" onclick="processData()">Preprocess Data</button>
+      <button class="button" onclick="trainModel()">Train Model</button>
+      <button class="button" onclick="predict()">Make Prediction</button>
+    </div>
+
+    <!-- Prediction Section -->
+    <div id="predictionResult" class="chart-container"></div>
+    
+    <!-- Graph Section -->
+    <div id="graph" class="chart-container"></div>
+  </div>
+
+  <div class="toggle-theme" onclick="toggleTheme()">🌙</div>
+
+  <script>
+    let data = [];
+    let model;
+
+    // Toggle Dark/Light Mode
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      document.body.classList.toggle('light-mode');
+      document.querySelector('.toggle-theme').textContent = document.body.classList.contains('dark-mode') ? '🌞' : '🌙';
+    }
+
+    // Load CSV File
+    function loadFile() {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const fileContent = event.target.result;
+        data = processCSV(fileContent);
+        displayDataPreview(data);
+      };
+
+      reader.readAsText(file);
+    }
+
+    // Process CSV Content
+    function processCSV(content) {
+      const rows = content.split("\n");
+      const result = rows.map(row => row.split(","));
+      return result;
+    }
+
+    // Display Data Preview
+    function displayDataPreview(data) {
+      const previewContainer = document.getElementById("dataPreview");
+      previewContainer.innerHTML = "<h3>Data Preview:</h3><pre>" + JSON.stringify(data.slice(0, 5), null, 2) + "</pre>";
+    }
+
+    // Preprocess Data (Normalize, Handle Missing, etc.)
+    function processData() {
+      if (!data || data.length === 0) return alert("No data to preprocess!");
+      
+      // Example Preprocessing: Normalization
+      const normalizedData = normalizeData(data);
+      displayGraph(normalizedData);
+    }
+
+    // Normalize Data
+    function normalizeData(data) {
+      const maxValues = data[0].map((_, colIdx) => Math.max(...data.map(row => parseFloat(row[colIdx]))));
+      return data.map(row => row.map((value, idx) => parseFloat(value) / maxValues[idx]));
+    }
+
+    // Display Graph of Data
+    function displayGraph(data) {
+      const graphContainer = document.getElementById("graph");
+      graphContainer.innerHTML = "<h3>Graph:</h3><pre>" + JSON.stringify(data.slice(0, 5), null, 2) + "</pre>";
+    }
+
+    // Train Model (Linear Regression Example)
+    function trainModel() {
+      if (!data || data.length === 0) return alert("No data to train model!");
+
+      // Example: Training a simple model using linear regression
+      model = "Linear Regression Model (dummy example)"; // Replace with a real model
+      alert("Model trained successfully!");
+    }
+
+    // Make Prediction (Using Trained Model)
+    function predict() {
+      if (!model) return alert("Please train the model first!");
+      
+      // Dummy prediction: Simulating real prediction logic
+      const prediction = Math.random();  // Replace with real prediction logic
+      displayPrediction(prediction);
+    }
+
+    // Display Prediction Result
+    function displayPrediction(prediction) {
+      const predictionContainer = document.getElementById("predictionResult");
+      predictionContainer.innerHTML = "<h3>Prediction Result:</h3><p>Prediction: " + prediction + "</p>";
+    }
+  </script>
+</body>
+</html>
